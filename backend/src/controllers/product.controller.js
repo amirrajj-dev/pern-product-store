@@ -17,13 +17,13 @@ export const getAllProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     const {name , image , price} = req.body
-    if (!name.trim() || !image.trim() || !price.trim()) {
+    if (!name.trim() || !image.trim() || isNaN(price)) {
       return res.status(400).json({ message: "Please fill all fields", success: false})
     }
 
     const result = await sql`INSERT INTO products (name , image , price) VALUES (${name}, ${image}, ${price})
-    RETURN *`;
-    if (!result){
+    RETURNING *`;
+    if (!result.length){
       return res.status(400).json({ message: "Product creation failed", success: false})
     }
     return res.status(201).json({
@@ -58,6 +58,29 @@ export const getOneProduct = async (req, res) => {
   }
 };
 
-export const updateProduct = async (req, res) => {};
+export const updateProduct = async (req, res) => {
+  try {
+    const {name , image , price} = req.body
+    const { id } = req.params;
+    if (!name.trim() || !image.trim() || !price.trim()) {
+      return res.status(400).json({ message: "Please fill all fields", success: false})
+    }
+    const result = await sql`UPDATE products SET name = ${name}, image = ${image}, price = ${price} WHERE id = ${id} RETURNING *`
+    if (!result.length){
+      return res.status(400).json({ message: "Product update failed", success: false})
+    }
+    return {
+      data : result[0],
+      message : 'product updated successfully',
+      success : true
+    }
+  } catch (error) {
+    return {
+      error,
+      message: "error updating the product",
+      success: false,
+    }
+  }
+};
 
 export const deleteProduct = async (req, res) => {};
