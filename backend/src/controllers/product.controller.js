@@ -67,13 +67,22 @@ export const updateProduct = async (req, res) => {
   try {
     const { name, image, price } = req.body;
     const { id } = req.params;
-    if (!name.trim() || !image.trim() || !price.trim()) {
+
+    const product = await sql`SELECT * FROM products WHERE id = ${id}`;
+    if (!product.length) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    if (!name?.trim() && !image?.trim() && !price?.trim()) {
       return res
-        .status(400)
-        .json({ message: "Please fill all fields", success: false });
+      .status(400)
+      .json({ message: "Please fill all fields", success: false });
     }
     const result =
-      await sql`UPDATE products SET name = ${name}, image = ${image}, price = ${price} WHERE id = ${id} RETURNING *`;
+      await sql`UPDATE products SET name = ${name || product[0].price}, image = ${image || product[0].image}, price = ${price || product[0].price} WHERE id = ${id} RETURNING *`;
     if (!result.length) {
       return res
         .status(400)
@@ -85,6 +94,7 @@ export const updateProduct = async (req, res) => {
       success: true,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       error,
       message: "error updating the product",
