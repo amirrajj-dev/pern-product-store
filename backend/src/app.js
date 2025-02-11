@@ -17,6 +17,7 @@ app.use(morgan("dev")) // log the request to the console
 app.use(express.json())
 app.use(cors({
     credentials: true, // enable cookies
+    origin : 'http://localhost:5173'
 }))
 
 app.use('/api/products' , productRoutes)
