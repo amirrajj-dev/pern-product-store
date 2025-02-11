@@ -5,6 +5,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import productRoutes from './routes/product.route.js'
 import {sql} from './utils/db.js'
+import { aj } from './utils/arcjet.js'
 
 const app = express()
 dotenv.config()
@@ -19,6 +20,34 @@ app.use(cors({
 }))
 
 app.use('/api/products' , productRoutes)
+
+app.use(async (req, res , next) =>{
+    const decision = await aj.protect(req , {
+        requested : 1
+    })
+
+    if(decision.isDenied()){
+       try {
+        if (decision.reason.isRateLimit()){
+            res.status(429).json({ message: 'Too many requests, please try again later', success: false })
+            return
+        }else if (decision.reason.isBot()){
+            res.status(403).json({ message: 'You are a bot, please try again later' , success : false})
+        }else{
+            res.status(401).json({ message: 'Invalid credentials, please try again' , success : false})
+        }
+        //check for spoofed bots
+      if (decision.results.some((result)=>result.reason.isBot() && result.reason.isSpoofed())){
+        res.status(403).json({ message: 'You are a bot, please try again later'})
+        return
+      }
+      next()
+       } catch (error) {
+        console.error('Error protecting the request:', error)
+        next(error)
+       }
+    }
+})
 
 const initDb = async ()=>{
     try {
