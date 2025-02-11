@@ -14,7 +14,31 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-export const createProduct = async (req, res) => {};
+export const createProduct = async (req, res) => {
+  try {
+    const {name , image , price} = req.body
+    if (!name.trim() || !image.trim() || !price.trim()) {
+      return res.status(400).json({ message: "Please fill all fields", success: false})
+    }
+
+    const result = await sql`INSERT INTO products (name , image , price) VALUES (${name}, ${image}, ${price})
+    RETURN *`;
+    if (!result){
+      return res.status(400).json({ message: "Product creation failed", success: false})
+    }
+    return res.status(201).json({
+      data: result[0],
+      success: true,
+      message: "Product created successfully",
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message : 'error creating product',
+      success : false,
+      error
+    })
+  }
+};
 
 export const getOneProduct = async (req, res) => {
   try {
