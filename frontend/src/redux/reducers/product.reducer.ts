@@ -1,4 +1,3 @@
-// src/redux/reducers/productReducer.ts
 import { createReducer } from '@reduxjs/toolkit';
 import { Product } from '../types';
 import { fetchAllProducts, fetchProduct, addProduct, updateProduct, removeProduct } from '../actions/product.action';
@@ -49,6 +48,7 @@ export const productReducer = createReducer(initialState, (builder) => {
     })
     .addCase(addProduct.fulfilled, (state, action) => {
       state.loading = false;
+      console.log(action);
       state.products.push(action.payload);
     })
     .addCase(addProduct.rejected, (state, action) => {
