@@ -3,6 +3,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import productRoutes from './routes/product.route.js'
 
 const app = express()
 dotenv.config()
@@ -15,6 +16,8 @@ app.use(express.json())
 app.use(cors({
     credentials: true, // enable cookies
 }))
+
+app.use('/api/products' , productRoutes)
 
 app.listen(port , ()=>{
     console.log(`Server is running on port ${port} 🐘🩶`)
