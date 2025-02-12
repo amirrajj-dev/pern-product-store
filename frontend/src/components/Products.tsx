@@ -8,6 +8,7 @@ import {
 import ProductCard from "./ProductCard";
 import { FaPlus, FaSyncAlt, FaRegFrown } from "react-icons/fa";
 import { toast, ToastOptions } from "react-toastify";
+import AddProductModal from "./AddProductModal";
 
 export const toastOptios: ToastOptions = {
   position: "bottom-center",
@@ -23,6 +24,7 @@ const Products = () => {
   const products = useSelector((state: RootState) => state.products.products);
   const isLoading = useSelector((state: RootState) => state.products.loading);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isOpen , setIsOpen] = useState(false)
 
   useEffect(() => {
     const getAllProducts = async () => {
@@ -51,9 +53,9 @@ const Products = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between mb-6">
-        <button className="btn btn-primary gap-2">
+    <div className="container mx-auto p-4 mt-4">
+      <div className="flex flex-col gap-4 sm:gap-0 sm:flex-row justify-between mb-6">
+        <button className="btn btn-primary gap-2" onClick={()=>setIsOpen(true)}>
           <FaPlus className="text-white" size={20} />
           <span className="text-white">Add Product</span>
         </button>
@@ -101,6 +103,7 @@ const Products = () => {
               ))
             )}
       </div>
+      <AddProductModal isOpen={isOpen} onClose={()=>setIsOpen(prev=>!prev)} />
     </div>
   );
 };
