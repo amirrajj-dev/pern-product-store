@@ -20,35 +20,34 @@ app.use(cors({
     origin : 'http://localhost:5173'
 }))
 
+app.use(async (req, res, next) => {
+    try {
+        const decision = await aj.protect(req, { requested: 1 });
+
+        if (decision.isDenied()) {
+            if (decision.reason.isRateLimit()) {
+                return res.status(429).json({ message: 'Too many requests, please try again later', success: false });
+            }
+            if (decision.reason.isBot()) {
+                return res.status(403).json({ message: 'You are a bot, access denied', success: false });
+            }
+            return res.status(401).json({ message: 'Invalid credentials', success: false });
+        }
+
+        // Check for spoofed bots
+        if (decision.results.some((result) => result.reason.isBot() && result.reason.isSpoofed())) {
+            return res.status(403).json({ message: 'Spoofed bot detected, access denied' });
+        }
+
+        next(); // Proceed only if request is allowed
+    } catch (error) {
+        console.error('Error in Arcjet protection:', error);
+        res.status(500).json({ message: 'Server error', success: false });
+    }
+});
+  
 app.use('/api/products' , productRoutes)
 
-app.use(async (req, res , next) =>{
-    const decision = await aj.protect(req , {
-        requested : 1
-    })
-
-    if(decision.isDenied()){
-       try {
-        if (decision.reason.isRateLimit()){
-            res.status(429).json({ message: 'Too many requests, please try again later', success: false })
-            return
-        }else if (decision.reason.isBot()){
-            res.status(403).json({ message: 'You are a bot, please try again later' , success : false})
-        }else{
-            res.status(401).json({ message: 'Invalid credentials, please try again' , success : false})
-        }
-        //check for spoofed bots
-      if (decision.results.some((result)=>result.reason.isBot() && result.reason.isSpoofed())){
-        res.status(403).json({ message: 'You are a bot, please try again later'})
-        return
-      }
-      next()
-       } catch (error) {
-        console.error('Error protecting the request:', error)
-        next(error)
-       }
-    }
-})
 
 const initDb = async ()=>{
     try {
