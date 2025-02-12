@@ -13,8 +13,8 @@ export const aj = arcjet({
         }),
         tokenBucket({
             interval : 10,
-            capacity : 10,
-            refillRate :5
+            capacity : 5,
+            refillRate :2
         })
     ]
 })
