@@ -5,8 +5,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import { HiMenu } from "react-icons/hi";
 
 const Navbar: React.FC = () => {
-  const [theme, setTheme] = useState("dark");
-  const [cartCount, setCartCount] = useState(1);
+  const [cartCount] = useState(1);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
   const themes = ["light", "dark", "cupcake", "forest", "aqua", "acid", "coffee", "sunset", "abyss", "winter", "dracula"]
 
@@ -15,12 +14,10 @@ const Navbar: React.FC = () => {
         localStorage.setItem('pern-product-store', JSON.stringify({theme: "dark"}));
     }else{
         const storedTheme = JSON.parse(localStorage.getItem('pern-product-store') as string).theme;
-        setTheme(storedTheme);
         document.documentElement.setAttribute("data-theme", storedTheme);
     }
   } , [])
   const switchTheme = (newTheme: string) => {
-    setTheme(newTheme);
     localStorage.setItem('pern-product-store', JSON.stringify({theme: newTheme}));
     document.documentElement.setAttribute("data-theme", newTheme);
     setIsMobileMenuOpen(false);

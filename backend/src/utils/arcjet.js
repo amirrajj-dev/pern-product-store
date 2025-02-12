@@ -12,9 +12,9 @@ export const aj = arcjet({
             allow : ['CATEGORY:SEARCH_ENGINE']
         }),
         tokenBucket({
-            interval : 10,
-            capacity : 5,
-            refillRate :2
+            interval : 5,
+            capacity : 20,
+            refillRate :30
         })
     ]
 })

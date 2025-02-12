@@ -6,13 +6,17 @@ import dotenv from 'dotenv'
 import productRoutes from './routes/product.route.js'
 import {sql} from './utils/db.js'
 import { aj } from './utils/arcjet.js'
+import path from 'path'
 
 const app = express()
 dotenv.config()
 
 const port = process.env.PORT
+const dirname = path.resolve()
 
-app.use(helmet())  //Helmet is a middleware that helps secure Express apps by setting various HTTP headers.
+app.use(helmet({
+    contentSecurityPolicy : false
+}))  //Helmet is a middleware that helps secure Express apps by setting various HTTP headers.
 app.use(morgan("dev")) // log the request to the console
 app.use(express.json())
 app.use(cors({
@@ -47,6 +51,13 @@ app.use(async (req, res, next) => {
 });
   
 app.use('/api/products' , productRoutes)
+
+if (process.env.NODE_ENV === 'production'){
+    app.use(express.static(path.join(dirname, '/frontend/dist')))
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(dirname, '/frontend/dist/index.html'))
+    })
+}
 
 
 const initDb = async ()=>{
