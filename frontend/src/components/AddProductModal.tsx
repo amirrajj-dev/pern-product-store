@@ -1,29 +1,39 @@
 import { useState } from "react";
-import { FaTimes, FaImage } from "react-icons/fa";
+import { FaTimes} from "react-icons/fa";
 import { toast } from "react-toastify";
-import { ToastOptions } from "react-toastify";
+import { toastOptions } from "./Products";
+import {AppDispatch} from '../redux/store'
+import {addProduct} from '../redux/actions/product.action'
+import { useDispatch } from "react-redux";
 
-export const toastOptions: ToastOptions = {
-  position: "bottom-center",
-  autoClose: 3000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: false,
-  draggable: false,
-};
-
-const AddProductModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+const AddProductModal = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const dispatch : AppDispatch = useDispatch()
 
-  const handleSubmit = () => {
-    if (!productName || !price || !imageUrl) {
+  const handleSubmit = async () => {
+    if (!productName.trim() || !price || !imageUrl.trim()) {
       toast.error("Please fill in all fields.", toastOptions);
       return;
     }
+    
+    const res = await dispatch(addProduct({name : productName.trim() , image : imageUrl.trim() , price : +price}))
+    if (res.type === "products/add/fulfilled"){
+      toast.success("Product added successfully.", toastOptions);
+      closeModal();
+    }else{
+      toast.error("Failed to add product.", toastOptions);
+    }
+  };
 
-    toast.success("Product added successfully!", toastOptions);
+  const closeModal = () => {
     setProductName("");
     setPrice("");
     setImageUrl("");
@@ -37,16 +47,22 @@ const AddProductModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
           <div className="modal modal-open">
             <div className="modal-box bg-primary p-8 rounded-lg shadow-xl w-full max-w-lg">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-primary-content">Add New Product</h2>
-                <button onClick={onClose} className="text-xl text-primary-content cursor-pointer">
+                <h2 className="text-2xl font-semibold text-primary-content">
+                  Add New Product
+                </h2>
+                <button
+                  onClick={onClose}
+                  className="text-xl text-primary-content cursor-pointer"
+                >
                   <FaTimes />
                 </button>
               </div>
 
               <div className="space-y-4">
-
                 <div>
-                  <label className="block text-lg font-medium text-primary-content">Product Name</label>
+                  <label className="block text-lg font-medium text-primary-content">
+                    Product Name
+                  </label>
                   <input
                     type="text"
                     value={productName}
@@ -57,7 +73,9 @@ const AddProductModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 </div>
 
                 <div>
-                  <label className="block text-lg font-medium text-primary-content">Price</label>
+                  <label className="block text-lg font-medium text-primary-content">
+                    Price
+                  </label>
                   <input
                     type="number"
                     value={price}
@@ -68,7 +86,9 @@ const AddProductModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
                 </div>
 
                 <div>
-                  <label className="block text-lg font-medium text-primary-content">Image URL</label>
+                  <label className="block text-lg font-medium text-primary-content">
+                    Image URL
+                  </label>
                   <div className="flex items-center mt-2">
                     <input
                       type="text"

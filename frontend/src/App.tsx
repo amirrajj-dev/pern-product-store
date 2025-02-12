@@ -7,7 +7,7 @@ import {ToastContainer} from 'react-toastify'
 const App = () => {
   return (
     <>
-      <div className="p-10 min-h-screen transition-colors duration-300">
+      <div className="p-0 sm:p-10 min-h-screen transition-colors duration-300">
         <Navbar/>
         <Routes>
           <Route path="/" element={<HomePage />} />

@@ -10,7 +10,7 @@ import { FaPlus, FaSyncAlt, FaRegFrown } from "react-icons/fa";
 import { toast, ToastOptions } from "react-toastify";
 import AddProductModal from "./AddProductModal";
 
-export const toastOptios: ToastOptions = {
+export const toastOptions: ToastOptions = {
   position: "bottom-center",
   autoClose: 3000,
   hideProgressBar: false,
@@ -45,9 +45,9 @@ const Products = () => {
       const res = await dispatch(removeProduct(id));
       console.log(res);
       if (res.type === "products/remove/fulfilled") {
-        toast.success("Product deleted successfully", toastOptios);
+        toast.success("Product deleted successfully", toastOptions);
       } else {
-        toast.error("Error deleting product", toastOptios);
+        toast.error("Error deleting product", toastOptions);
       }
     }
   };
@@ -69,12 +69,12 @@ const Products = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center">
         {isLoading
           ? [...Array(8)].map((_, index) => (
               <div
                 key={index}
-                className="card w-72 bg-base-100 shadow-xl animate-pulse"
+                className="card w-full md:w-96 bg-base-100 shadow-xl animate-pulse"
               >
                 <div className="h-48 w-full bg-gray-300 rounded-t-lg"></div>
                 <div className="p-4">
