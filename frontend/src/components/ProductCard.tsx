@@ -5,17 +5,15 @@ import { Link } from "react-router-dom";
 
 interface ProductCardProps {
   product: Product;
-  onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
-  onEdit,
   onDelete,
 }) => {
   return (
-    <div className="card w-full md:w-96 bg-base-100 shadow-xl rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl">
+    <div className="card w-full bg-base-100 shadow-xl rounded-xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl">
       <div className="relative">
         <img
           src={product.image}
@@ -36,7 +34,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Link
             to={`/products/${product.id}`}
             className="btn btn-outline btn-primary flex items-center gap-2 w-full sm:w-auto"
-            onClick={() => onEdit(product.id)}
           >
             <FaEdit /> Edit
           </Link>

@@ -74,7 +74,7 @@ const Products = () => {
           ? [...Array(8)].map((_, index) => (
               <div
                 key={index}
-                className="card w-full md:w-96 bg-base-100 shadow-xl animate-pulse"
+                className="card w-full bg-base-100 shadow-xl animate-pulse"
               >
                 <div className="h-48 w-full bg-gray-300 rounded-t-lg"></div>
                 <div className="p-4">
