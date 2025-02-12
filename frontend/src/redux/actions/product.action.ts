@@ -19,7 +19,7 @@ export const fetchAllProducts = createAsyncThunk<Product[], void>(
 
 export const fetchProduct = createAsyncThunk<Product, number>('products/fetchOne', async (id) => {
   const response = await axiosInstance.get(`/products/${id}`);
-  return response.data.data;
+  return response.data.data[0];
 });
 
 export const addProduct = createAsyncThunk<Product, Partial<Product>>('products/add', async (product) => {
