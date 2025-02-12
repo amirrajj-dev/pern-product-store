@@ -87,14 +87,14 @@ const Products = () => {
                 </div>
               </div>
             ))
-          : products.length === 0 ? (
+          : products?.length === 0 ? (
               <div className="flex flex-col items-center col-span-full text-center justify-center w-full max-w-lg mx-auto p-6 bg-primary text-primary-content rounded-lg shadow-xl">
                 <FaRegFrown className="text-5xl md:text-6xl mb-4" />
                 <h2 className="text-2xl md:text-3xl font-semibold mb-2">Oops! No Products Found</h2>
                 <p className="text-base sm:text-lg">It seems we couldn't find any products. Please check back later or try adding new ones.</p>
               </div>
             ) : (
-              products.map((product) => (
+              products?.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
