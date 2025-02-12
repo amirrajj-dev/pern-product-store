@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProducts } from "../redux/actions/product.action";
 import ProductCard from "./ProductCard";
+import { FaPlus, FaSyncAlt } from "react-icons/fa"; 
 
 const Products = () => {
   const dispatch: AppDispatch = useDispatch();
   const products = useSelector((state: RootState) => state.products.products);
   const isLoading = useSelector((state: RootState) => state.products.loading);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const getAllProducts = async () => {
@@ -16,11 +18,32 @@ const Products = () => {
     getAllProducts();
   }, [dispatch]);
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await dispatch(fetchAllProducts());
+    setIsRefreshing(false);
+  };
+
   return (
     <div className="container mx-auto p-4">
+      <div className="flex justify-between mb-6">
+        <button className="btn btn-primary gap-2">
+          <FaPlus className="text-white" size={20} />
+          <span className="text-white">Add Product</span>
+        </button>
+
+        <button 
+          onClick={handleRefresh} 
+          className={`btn btn-secondary gap-2 ${isRefreshing ? "loading" : ""}`}
+        >
+          <FaSyncAlt className="text-white" size={20} />
+          <span className="text-white">Refresh</span>
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center">
         {isLoading
-          ? 
+          ?
             [...Array(8)].map((_, index) => (
               <div key={index} className="card w-72 bg-base-100 shadow-xl animate-pulse">
                 <div className="h-48 w-full bg-gray-300 rounded-t-lg"></div>
@@ -34,7 +57,7 @@ const Products = () => {
                 </div>
               </div>
             ))
-          :
+          : 
             products.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
     </div>
