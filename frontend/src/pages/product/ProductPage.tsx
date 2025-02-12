@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "../../redux/store";
-import { fetchProduct, removeProduct } from "../../redux/actions/product.action";
+import { toastOptions } from "../../components/Products";
+import {
+  fetchProduct,
+  removeProduct,
+  updateProduct,
+} from "../../redux/actions/product.action";
 import { useDispatch, useSelector } from "react-redux";
 import { FaArrowLeft, FaSave, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -10,8 +15,10 @@ const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
-  const product = useSelector((state: RootState) => state.products.selectedProduct);
-  const loading = useSelector((state: RootState) => state.products.loading)
+  const product = useSelector(
+    (state: RootState) => state.products.selectedProduct
+  );
+  const loading = useSelector((state: RootState) => state.products.loading);
 
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
@@ -34,22 +41,46 @@ const ProductPage = () => {
     }
   }, [product]);
 
-  const handleSaveChanges = () => {
-    toast.success("Changes saved successfully!");
+  const handleSaveChanges = async () => {
+    if (
+      productName.trim() &&
+      (productName.trim() !== product?.name ||
+        price.trim() !== product?.price?.toString() ||
+        imageUrl !== product?.image)
+    ) {
+      const updatedProduct = {
+        id: +product!.id,
+        product: {
+          name: productName || product?.name,
+          price: +price || product?.price, 
+          image: imageUrl || product?.image,
+        },
+      };
+
+      const res = await dispatch(updateProduct(updatedProduct));
+      if (res.type === "products/update/fulfilled") {
+        toast.success("Product updated successfully" , toastOptions);
+      } else {
+        toast.error("Failed to update product" , toastOptions);
+      }
+    } else {
+      toast.info("No changes detected." , toastOptions);
+    }
   };
 
   const handleDelete = async () => {
-    const confirmation = confirm("Are you sure you want to delete this product?");
+    const confirmation = confirm(
+      "Are you sure you want to delete this product?"
+    );
     if (confirmation) {
       await dispatch(removeProduct(+id!));
-      toast.success("Product deleted successfully");
+      toast.success("Product deleted successfully" , toastOptions);
       navigate("/");
     }
   };
 
   return (
     <div className="container mx-auto w-full flex flex-col items-center justify-center bg-base-200 p-6">
-
       <button
         onClick={() => navigate("/")}
         className="btn btn-outline btn-secondary flex items-center gap-2 mb-6"
@@ -93,7 +124,9 @@ const ProductPage = () => {
 
             <div className="w-full md:w-1/2 space-y-6">
               <div>
-                <label className="block text-lg font-semibold text-gray-800">Product Name</label>
+                <label className="block text-lg font-semibold text-gray-800">
+                  Product Name
+                </label>
                 <input
                   type="text"
                   value={productName}
@@ -103,7 +136,9 @@ const ProductPage = () => {
               </div>
 
               <div>
-                <label className="block text-lg font-semibold text-gray-800">Price ($)</label>
+                <label className="block text-lg font-semibold text-gray-800">
+                  Price ($)
+                </label>
                 <input
                   type="number"
                   value={price}
@@ -113,7 +148,9 @@ const ProductPage = () => {
               </div>
 
               <div>
-                <label className="block text-lg font-semibold text-gray-800">Image URL</label>
+                <label className="block text-lg font-semibold text-gray-800">
+                  Image URL
+                </label>
                 <input
                   type="text"
                   value={imageUrl}
