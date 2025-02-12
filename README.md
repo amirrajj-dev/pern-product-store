@@ -1,4 +1,4 @@
-# 🛒 PERN Product Store
+#  PERN Product Store 🐘🩶
 
 🚀 Live Demo: [pern-product-store-hlb3.onrender.com](https://pern-product-store-hlb3.onrender.com)
 
@@ -54,7 +54,7 @@ npm install
 cp .env.example .env
 
 # Start the backend
-tnpm run dev
+npm run dev
 ```
 
 ### 💻 Frontend Setup
@@ -63,7 +63,7 @@ cd frontend
 npm install
 
 # Start the frontend
-tnpm run dev
+npm run dev
 ```
 
 ---
